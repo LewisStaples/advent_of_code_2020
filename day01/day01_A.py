@@ -1,4 +1,4 @@
-# adventOfCode 2021 day 14, part a
+# adventOfCode 2020 day 1, part a
 # https://adventofcode.com/2020/day/1
 
 print()

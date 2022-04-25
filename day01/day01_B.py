@@ -1,4 +1,4 @@
-# adventOfCode 2021 day 14, part b
+# adventOfCode 2020 day 1, part b
 # https://adventofcode.com/2020/day/1
 
 import sys
