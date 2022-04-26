@@ -10,14 +10,13 @@ class PasswordPolicy:
         self.password_string = password_string
         dummy = 123
 
-    def valid(self):
-        if self.password_string.count(self.letter_string) in range(self.num_lower, self.num_higher+1):
-            return True
-        else:
-            return False
+    def valid_partA(self):
+        return self.password_string.count(self.letter_string) in range(self.num_lower, self.num_higher+1)
+
+    def valid_partB(self):
+        return ((self.password_string[self.num_lower-1] != self.letter_string) == (self.password_string[self.num_higher-1] == self.letter_string))
 
 password_policies = []
-valid_password_count = 0 # This is the answer
 
 # Reading input from the input file
 input_filename='input_sample0.txt'
@@ -28,9 +27,14 @@ with open(input_filename) as f:
         in_string = in_string.rstrip()
         password_policies.append(PasswordPolicy(in_string))
 
+valid_password_count = 0 # This is the answer
 for password in password_policies:
-    if password.valid():
+    if password.valid_partA():
         valid_password_count += 1
+print(f'The number of valid passwords for Part A is {valid_password_count}')
 
-print(f'The number of valid passwords is {valid_password_count}\n')
-
+valid_password_count = 0 # Resetting to zero, to calculate for part B
+for password in password_policies:
+    if password.valid_partB():
+        valid_password_count += 1
+print(f'The number of valid passwords for Part B is {valid_password_count}\n')
