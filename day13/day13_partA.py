@@ -21,8 +21,6 @@ earliest_known_bus = {
     'earliest_departure': float('inf')
 }
 for this_bus_ID in bus_IDs:
-    # print(this_bus_ID, end=', ')
-    # print(this_bus_ID - earliest_timestamp % this_bus_ID)
     earliest_departure_for_this_bus = this_bus_ID - earliest_timestamp % this_bus_ID
     if earliest_departure_for_this_bus < earliest_known_bus['earliest_departure']:
         earliest_known_bus['bus_ID'] = this_bus_ID
