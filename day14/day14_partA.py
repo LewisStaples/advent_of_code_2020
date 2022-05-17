@@ -32,5 +32,5 @@ with open(input_filename) as f:
             # write value to memory address
             memory[address] = value
 
-print(f'The answer to part A is {None}')
+print(f'The answer to part A is {sum(memory.values())}')
 
