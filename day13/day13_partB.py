@@ -5,7 +5,7 @@ import copy
 
 bus_pair = []
 
-input_filename='input_sample0.txt'
+input_filename='input_sample1.txt'
 print(f'\nUsing input file: {input_filename}')
 with open(input_filename) as f:
     f.readline().rstrip()
@@ -19,43 +19,27 @@ with open(input_filename) as f:
     # get rid of variables that won't be needed anymore
     del in_string2, string_list, f, input_filename, busID
 
-# sort bus_pair by element 1 in tuple (therefore period_new < period_combination)
-bus_pair.sort(key=lambda tup: tup[1])
-
-start_time_combination, period_combination = bus_pair.pop()
-print(f'{start_time_combination} , {period_combination}')
+# Get the start time and period for the earliest bus
+# Treat those as the earliest bus that needs all requirements of all buses seen up until now
+# (That is labelled as "combined")
+start_time_combined, period_combined = bus_pair.pop(0)
+print(f'{start_time_combined} , {period_combined}')
 
 while len(bus_pair) > 0:
-    start_time_new, period_new = bus_pair.pop()
+    # Get the start time and period for the next bus
+    start_time_new, period_new = bus_pair.pop(0)
     print(f'{start_time_new} , {period_new}')
-    combination_list = [start_time_combination]
-    new_entry_list = [start_time_new]
 
-    while True:
-        if len(combination_list) > 2 and len(new_entry_list) > 2:
-            break
-        if combination_list[-1] < new_entry_list[-1]:
-            combination_list.append(combination_list[-1] + period_combination)
-        elif combination_list[-1] > new_entry_list[-1]:
-            new_entry_list.append(new_entry_list[-1] + period_new)
-        else:
-            break
+    # Combine the prior combined with this newest bus
+    # Start by trying the next scheduled bus on the combined route
+    new_start_time_combined = start_time_combined + period_combined
+    while (new_start_time_combined + start_time_new) % period_new != 0:
+        # Now try the bus on the combined route that is scheduled after the prior one
+        new_start_time_combined += period_combined
 
-    # combine combination and new_entry in new values of start_time_combination, period_combination
-    # start_time_combination = copy.deepcopy(combination_list[-1])
-    combo0 = combination_list.pop(0)
-    if new_entry_list[0] > combo0:
-        combo0 = combination_list.pop(0)
-    combo1 = combination_list.pop(0)
+    # The above while loop ends only when the above is complete
+    start_time_combined = new_start_time_combined
+    period_combined *= period_new
 
-    # find how many slots is the new_entry_list entry before combo0
-    # find how many slots is the new_entry_list entry before combo1
-    # use both slot counts above to calculate the new value of start_time_combination
-
-    period_combination = period_new * period_combination
-
-    # delete lists, as they won't be needed again
-    del combination_list, new_entry_list
-
-soln_B = period_combination - start_time_combination
-print(f'\nThe solution to Part B is {soln_B}\n')
+# soln_B = None
+print(f'\nThe solution to Part B is {start_time_combined}\n')
