@@ -5,7 +5,7 @@ import copy
 
 bus_pair = []
 
-input_filename='input_sample1.txt'
+input_filename='input_sample0.txt'
 print(f'\nUsing input file: {input_filename}')
 with open(input_filename) as f:
     f.readline().rstrip()
@@ -32,14 +32,16 @@ while len(bus_pair) > 0:
 
     # Combine the prior combined with this newest bus
     # Start by trying the next scheduled bus on the combined route
-    new_start_time_combined = start_time_combined + period_combined
-    while (new_start_time_combined + start_time_new) % period_new != 0:
+    # (Note that advanced the combined route is more efficient than
+    # advanced the newest bus, because the combined route will have 
+    # a much larger period, as more and more buses are added to the
+    # combination)
+    start_time_combined += period_combined
+    while (start_time_combined + start_time_new) % period_new != 0:
         # Now try the bus on the combined route that is scheduled after the prior one
-        new_start_time_combined += period_combined
+        start_time_combined += period_combined
 
     # The above while loop ends only when the above is complete
-    start_time_combined = new_start_time_combined
     period_combined *= period_new
 
-# soln_B = None
 print(f'\nThe solution to Part B is {start_time_combined}\n')
