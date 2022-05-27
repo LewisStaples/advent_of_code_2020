@@ -23,7 +23,7 @@ ticket_type = TicketType.NON_TICKET
 sum_invalid_values = 0
 
 # Reading input from the input file
-input_filename='input_sample1.txt'
+input_filename='input.txt'
 print(f'Using input file: {input_filename}')
 with open(input_filename) as f:
     # Pull in each line from the input file
@@ -60,11 +60,11 @@ with open(input_filename) as f:
 # Input file has been read, so manipulate data in memory
 for i3 in range(len(valid_values)):
     for i4 in fieldNum_to_name:
-        if fieldNum_to_name[i4] is list and len(fieldNum_to_name[i4]) == 1:
+        if type(fieldNum_to_name[i4]) is list and len(fieldNum_to_name[i4]) == 1:
             fieldNum_to_name[i4] = fieldNum_to_name[i4][0]
             break
     for i5 in fieldNum_to_name:
-        if fieldNum_to_name[i5] is list:
+        if type(fieldNum_to_name[i5]) is list:
             if fieldNum_to_name[i4] in fieldNum_to_name[i5]:
                 fieldNum_to_name[i5].remove(fieldNum_to_name[i4])
 
