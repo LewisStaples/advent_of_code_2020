@@ -1,0 +1,6 @@
+line with 1  |
+line with 2  ||
+line with 3   |||
+line with none
+line with none
+ 

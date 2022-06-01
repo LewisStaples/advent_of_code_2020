@@ -1,8 +1,8 @@
 # adventOfCode 2020 day 19
 # https://adventofcode.com/2020/day/19
 
-from numpy import isin
-
+import sys
+import copy
 
 input_rules = dict()
 messages = []
@@ -30,96 +30,86 @@ with open(input_filename) as f:
         elif in_string.isalpha():
             messages.append(in_string)
 
-rules = ['0']
-close_paren_needed = False
-# while [x for x in rules if isinstance(x, int)] != []:
+# Rules is a list of lists.
+# As the program goes along, each outer list element is created in response to a pipe char in the input.
+# At the end, each of outer list's elements will describe one of the valid strings.
+# As the program goes along, the inner list has content to describe what is known about the choices that have been made in reponse to pipe characters.
+# At the end, the inner list will be a list of letters allowed.
+rules = [['0']]
+
+def time_to_stop():
+    for rule in rules:
+        if [x for x in rule if x.isdigit()] != []:
+            return False
+    return True
+
 while True:
-    for i, old_ele in enumerate(rules):
-        # if isinstance(old_ele, int):
-        if old_ele.isdigit():
-            # remove int element
-            rules.pop(i)
+    for i1 in range(len(rules)):
+        for i2, old_ele in enumerate(rules[i1]):
+            if old_ele.isdigit():
+                # remove int element
+                rules[i1].pop(i2)
 
-            # look up the rule associated with the int
-            new_ele_group = input_rules[old_ele].split(' ')
+                # look up the rule associated with the removed int
+                new_ele_group = input_rules[old_ele]
 
-            # if the rule has a pipe character, split it up
-            pipeChar_indices = []
-            for k, ch in enumerate(new_ele_group):
-                if ch == '|':
-                    pipeChar_indices.append(k)
-            if len(pipeChar_indices) > 0:
                 dummy = 123
-                while len(pipeChar_indices) > 0:
-                    l = pipeChar_indices.pop()
+                # If rule has a pipe character
+                new_ele_group_list_pipe = new_ele_group.split(' | ')
 
-                    new_ele_group.insert(l+1, '(')
-                    new_ele_group.insert(l, ')')
+                if len(new_ele_group_list_pipe) == 2:
+                    rules.append(copy.deepcopy(rules[i1]))
 
-                new_ele_group.insert(0, '(')
-                new_ele_group.append(')')
-                dummy = 123
-            dummy = 123
+                    for i3, new_ele in enumerate(new_ele_group_list_pipe[1].split(' ')):
+                        if new_ele == ' ':
+                            continue
 
-            # for j, new_ele in enumerate(new_ele_group):
-                # if new_ele[0].isdigit():
-                #     new_ele_group[j] = int(new_ele)
-                # rules.insert(i + j, new_ele)
-
-            dummy = 123
+                        new_ele = new_ele.replace('"', '')
+                        rules[-1].insert(i2+i3, new_ele)
+                        dummy = 123
 
 
+                # for i3, new_ele in enumerate(new_ele_group):
+                for i3, new_ele in enumerate(new_ele_group_list_pipe[0].split(' ')):
+                    if new_ele == ' ':
+                        continue
 
-            # for j, new_ele in enumerate(input_rules[old_ele].split(' ')):
-            #     if new_ele[0].isdigit():
-            #         new_ele = int(new_ele)
-            #     rules.insert(i + j, new_ele)
-            #     # if new_ele == '|':
-            #     #     close_paren_needed = True
-            #     dummy = 123
+                    new_ele = new_ele.replace('"', '')
+                    rules[i1].insert(i2+i3, new_ele)
+                    dummy = 123
 
-            # # Insert parentheses here
-            # if close_paren_needed:
-            #     close_paren_needed = False
+                break
 
-                # # First opening parenthesis
-                # rules.insert(i, '(')
+        dummy = 123
+        # if '|' in rules[i1]:
+        #     # Make a deep copy
+        #     rules.append(copy.deepcopy(rules[i1]))
 
-                # # Insert internal parentheses
-                # pipeChar_indices = []
-                # for k, ch in enumerate(rules):
-                #     if ch == '|':
-                #         pipeChar_indices.append(k)
-                # while len(pipeChar_indices) > 0:
-                #     l = pipeChar_indices.pop()
-                #     rules.insert(l+1, '(')
-                #     rules.insert(l, ')')
+        #     # Remove everything after the pipe in i1-th element
+        #     split_index =  rules[i1].index('|')
+        #     rules[i1] = rules[i1][:split_index]
 
-                # # Last closing parenthesis
-                # rules.append(')')
+        #     # Remove everything b the pipe in (new) deep copy
+        #     rules[-1] = rules[-1][split_index+1:]
 
-                # dummy = 123
 
-            dummy = 123
-        
-            # Only replace one rule at a time
-            for q, ele in enumerate(new_ele_group):
-                rules.insert(i+q, ele)
-            break
+            
 
-        # elif old_ele[0] == '"':
-        #     # remove the quotes (from starting and ending characters)
-        #     rules.pop(i)
-        #     old_ele = old_ele[1:-1]
-        #     rules.insert(i, old_ele)
-        #     dummy = 123
-        #     break
 
     dummy = 123
-    # if new_ele_group
-    if [x for x in rules if x.isdigit()] == []:
+    # Stop condition ... if there are no digits left in rules
+    # for rule in rules:
+    #     if [x for x in rule if x.isdigit()] == []:
+    #         break
+    # break
+
+    # if [x for x in rules if x.isdigit()] == []:
+    #     break
+
+    # Detect whether all rules' numbers have been replaced with the actual rule
+    if time_to_stop():
         break
 dummy = 123
-pattern_str = ''.join(rules).replace('"', '')
+# pattern_str = ''.join(rules).replace('"', '')
 
-print(f'Pattern string: {pattern_str}')
+# print(f'Pattern string: {pattern_str}')
