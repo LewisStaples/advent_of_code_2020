@@ -19,7 +19,7 @@ rules = [['0']]
 final_rule_strings = []
 
 # Reading input from the input file
-input_filename='input.txt'
+input_filename='input_sample2.txt'
 print(f'\nUsing input file: {input_filename}\n')
 # print('Using rules:')
 with open(input_filename) as f:
@@ -98,6 +98,7 @@ while True:
     if final_rule_strings[i_rule] == input_messages[i_message]:
         num_matching_messages += 1
         i_rule += 1
+        print(input_messages[i_message])
     elif final_rule_strings[i_rule] < input_messages[i_message]:
         i_rule += 1
     else:

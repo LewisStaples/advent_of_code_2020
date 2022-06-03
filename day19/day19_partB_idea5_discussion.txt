@@ -1,0 +1,54 @@
+Notes on part B.  (A lot of code was written earlier based on different approaches to the problem, but this is the latest approach)
+
+Rule 42 possibilities:
+aaaaa
+aaaab
+aaaba
+aaabb
+aabbb
+ababa
+abbbb
+baaaa
+baabb
+babbb
+bbaaa
+bbaab
+bbabb
+bbbab
+bbbba
+bbbbb
+
+Rule 42 8
+Then creates a loop that creates a string where the five-characters above are put together as long as needed.
+
+
+Rule 31 possibilities:
+aabaa
+aabab
+aabba
+abaaa
+abaab
+ababb
+abbaa
+abbab
+abbba
+baaab
+baaba
+babaa
+babab
+babba
+bbaba
+bbbaa
+
+Rule 42 31 creates no loop.  It creates 10 character strings where the first five follow rule 42 and the second five follow rule 31
+
+Rule 42 11 31 creates a loop where rule 42 occurs X times, followed by rule 31 occuring X times.
+
+Strategy to solve the problem.  This sample has all substrings with length of 5.  I need to verify that each list of substrings (with length of 5) have no overlaps (i.e., no Rule#42 5-string is also a valid Rule#31 5-string)
+
+The message string's length must be evenly divisible by 5 (if not ... reject it)
+
+The message strings' first 5 characters must match something in Rule 42.  The second 5 characters also must match Rule 42.  After that, keep checking for all 5 characters matching Rule 42.  When a substring of 5 characters doesn't match 42, it must match Rule#31.  All subsequent substrings of 5 characters also must match Rule#31.  The total count of Rule#42 substrings must be at least one greater than the Rule#31 substrings.  If all requirements described up until now are met, then it's a match ... otherwise it isn't a match.
+
+
+
