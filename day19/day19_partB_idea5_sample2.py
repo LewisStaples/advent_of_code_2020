@@ -34,22 +34,22 @@ with open(input_filename) as f:
 # input_messages.sort()
 
 rule_42_strings = [
-    'aaaaa' ,
-    'aaaab' ,
-    'aaaba' ,
-    'aaabb' ,
-    'aabbb' ,
-    'ababa' ,
-    'abbbb' ,
-    'baaaa' ,
-    'baabb' ,
-    'babbb' ,
-    'bbaaa' ,
-    'bbaab' ,
-    'bbabb' ,
-    'bbbab' ,
-    'bbbba' ,
-    'bbbbb' 
+    'aaaaa',
+    'aaaab',
+    'aaaba',
+    'aaabb',
+    'aabbb',
+    'ababa',
+    'abbbb',
+    'baaaa',
+    'baabb',
+    'babbb',
+    'bbaaa',
+    'bbaab',
+    'bbabb',
+    'bbbab',
+    'bbbba',
+    'bbbbb',
 ]
 
 
@@ -74,11 +74,25 @@ rule_31_strings = [
     'bbbaa' ,
 ]
 
-# Loop through messages
+# To verify no overlap between rule_42_strings and rule_31_strings
+# Add both lists to a set.  If len(set) equals the sum of list lengths, then there is no overlapping between them.
+
+set_of_two_lists = set()
+set_of_two_lists.update(rule_31_strings, rule_42_strings)
+
+if len(set_of_two_lists) == len(rule_31_strings) + len(rule_42_strings):
+    print('There are no overlaps')
+else:
+    print('There are overlaps')
+print()
+
+# Loop through messages, and count messages that follow rule#0
+count_messages_follow_rule_zero = 0
 for message in input_messages:
     message_result_list = []
     # print(message)
     # print(len(message))
+    
     for i in range(int(len(message)/5)):
         # print(f'{i}:  {message[i*5: (i+1)*5]}', end=', ')
         if message[i*5: (i+1)*5] in rule_42_strings:
@@ -114,15 +128,10 @@ for message in input_messages:
         else:
             # print('SUCCEEDED', end='  ')
             print(message)
+            count_messages_follow_rule_zero += 1
 
 
-# To verify no overlap between rule_42_strings and rule_31_strings
-# Add both lists to a set.  If len(set) equals the sum of list lengths, then there is no overlapping between them.
 
-set_of_two_lists = set()
-set_of_two_lists.update(rule_31_strings, rule_42_strings)
+print(f'\nThe answer to part B is: {count_messages_follow_rule_zero}\n')
 
-if len(set_of_two_lists) == len(rule_31_strings) + len(rule_42_strings):
-    print('There are no overlaps')
-else:
-    print('There are overlaps')
+
