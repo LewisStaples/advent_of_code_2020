@@ -69,6 +69,57 @@ class InteriorPoints:
         self._interior_points.append(next_row)
         dummy = 123
 
+    # This handles flips and rotations
+    def display(self):
+        # Compile a collection of points
+        collection_of_points = set()
+        for a, line in enumerate(self._interior_points):
+            for b, ch in enumerate(line):
+                # Transforms
+                a_transformed = a
+                b_transformed = b
+                if self._flipped['horizontally']:
+                    a_transformed = len(self._interior_points[0]) - 1 - a_transformed
+                if self._flipped['vertically']:
+                    b_transformed = len(self._interior_points[0]) - 1 - b_transformed
+                if self._rotation == RotationStatus.NINETY_DEGREES:
+                    a_transformed_orig = a_transformed
+                    b_transformed_orig = b_transformed
+
+                    a_transformed = b_transformed_orig
+                    # b_transformed = -1 * a_transformed_orig
+                    b_transformed = len(self._interior_points[0]) - 1 - a_transformed_orig
+
+                if self._rotation == RotationStatus.ONE_EIGHTY_DEGREES:
+                    a_transformed = len(self._interior_points[0]) - 1 - a_transformed
+                    b_transformed = len(self._interior_points[0]) - 1 - b_transformed
+                if self._rotation == RotationStatus.TWO_SEVENTY_DEGREES:
+                    a_transformed_orig = a_transformed
+                    b_transformed_orig = b_transformed
+
+                    # a_transformed = -1 * b_transformed_orig
+                    a_transformed = len(self._interior_points[0]) - 1 - b_transformed_orig
+                    b_transformed = a_transformed_orig
+                if ch == '#':
+                    collection_of_points.add((a_transformed,b_transformed))
+
+        # Traverse the collection of points and display
+        for i in range(len(self._interior_points[0])):
+            for j in range(len(self._interior_points[0])):
+                if (i,j) in collection_of_points:
+                    print('#', end='')
+                else:
+                    print('.', end='')
+            print()
+        print()
+
+    # Does not handle transforms
+    def display_old(self):
+        dummy = 123
+        for line in self._interior_points:
+            for ch in line:
+                print(ch, end='')
+            print()
 
 tile_number = None
 tile_line_number = None
@@ -105,7 +156,7 @@ def add_edge(tile_number, in_string, init_compass_point):
     tile_edges.loc[len(tile_edges.index)] = [tile_number, in_string, init_compass_point, reverse_status]
 
 # Reading input from the input file
-input_filename='input.txt'
+input_filename='input_scenario0.txt'
 print(f'\nUsing input file: {input_filename}\n')
 with open(input_filename) as f:
     # Pull in each line from the input file
@@ -129,12 +180,12 @@ with open(input_filename) as f:
             left_edge += in_string[0]
             right_edge += in_string[-1]
 
-            # Add a tile's top or bottom edge
+            # Add a tile's top edge
             if tile_line_number == 1:
                 # This line is an edge
                 add_edge(tile_number, in_string, CompassStatus.NORTH)
 
-            # After reading the tile's bottom edge, add the left and right edges
+            # Add the other edges
             elif tile_line_number == len(in_string):
                 add_edge(tile_number, left_edge, CompassStatus.EAST)
                 add_edge(tile_number, right_edge, CompassStatus.WEST)
@@ -173,4 +224,25 @@ for tilenumber in tilenumbers_dual_appearances.unique():
         print(tilenumber)
         product_corner_tiles *= tilenumber
 
-print(f'The answer to part A is {product_corner_tiles}')
+print(f'The answer to part A is {product_corner_tiles}\n')
+
+print('Tile# 1951 -- original')
+interior_points[1951].display()
+print()
+
+print('Tile# 1951 -- flipped horizontally')
+interior_points[1951]._flipped['horizontally'] = True
+interior_points[1951].display()
+
+print('Tile# 1951 -- rotated ninety degrees')
+interior_points[1951]._rotation = RotationStatus.NINETY_DEGREES
+interior_points[1951].display()
+
+print('Tile# 1951 -- rotated 180 degrees')
+interior_points[1951]._rotation = RotationStatus.ONE_EIGHTY_DEGREES
+interior_points[1951].display()
+
+print('Tile# 1951 -- rotated 270 degrees')
+interior_points[1951]._rotation = RotationStatus.TWO_SEVENTY_DEGREES
+interior_points[1951].display()
+
