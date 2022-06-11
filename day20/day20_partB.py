@@ -65,12 +65,13 @@ class InteriorPoints:
         self._interior_points = []
         self._rotation = RotationStatus.NONE
         self._flipped = {'horizontally': False, 'vertically': False}
+        self._mosaic_position = None
     def append(self, next_row):
         self._interior_points.append(next_row)
         dummy = 123
 
-    # This handles flips and rotations
-    def display(self):
+    # This diplay function displays the tile.
+    def display(self, show_edges = False):
         # Compile a collection of points
         collection_of_points = set()
         for a, line in enumerate(self._interior_points):
@@ -85,9 +86,7 @@ class InteriorPoints:
                 if self._rotation == RotationStatus.NINETY_DEGREES:
                     a_transformed_orig = a_transformed
                     b_transformed_orig = b_transformed
-
                     a_transformed = b_transformed_orig
-                    # b_transformed = -1 * a_transformed_orig
                     b_transformed = len(self._interior_points[0]) - 1 - a_transformed_orig
 
                 if self._rotation == RotationStatus.ONE_EIGHTY_DEGREES:
@@ -96,8 +95,6 @@ class InteriorPoints:
                 if self._rotation == RotationStatus.TWO_SEVENTY_DEGREES:
                     a_transformed_orig = a_transformed
                     b_transformed_orig = b_transformed
-
-                    # a_transformed = -1 * b_transformed_orig
                     a_transformed = len(self._interior_points[0]) - 1 - b_transformed_orig
                     b_transformed = a_transformed_orig
                 if ch == '#':
@@ -105,11 +102,16 @@ class InteriorPoints:
 
         # Traverse the collection of points and display
         for i in range(len(self._interior_points[0])):
+            # if show_edges:
+            #     print('X', end='')
             for j in range(len(self._interior_points[0])):
                 if (i,j) in collection_of_points:
                     print('#', end='')
                 else:
                     print('.', end='')
+            # if show_edges:
+            #     print('X')
+            # else:
             print()
         print()
 
@@ -156,7 +158,7 @@ def add_edge(tile_number, in_string, init_compass_point):
     tile_edges.loc[len(tile_edges.index)] = [tile_number, in_string, init_compass_point, reverse_status]
 
 # Reading input from the input file
-input_filename='input_scenario0.txt'
+input_filename='input.txt'
 print(f'\nUsing input file: {input_filename}\n')
 with open(input_filename) as f:
     # Pull in each line from the input file
@@ -198,6 +200,8 @@ with open(input_filename) as f:
                 dummy = 123
 
 # Diagnostics:
+# (No problems detected in either the sample data or the 'real' data)
+
 # Is the number of tiles a perfect square?
 number_of_tiles = int(len(tile_edges)/4)
 square_length = int(math.sqrt(number_of_tiles))
@@ -211,6 +215,16 @@ print(tile_edges.groupby(['EdgeString']).count().values.min())
 print(tile_edges.groupby(['EdgeString']).count().values.max())
 print()
 
+# Verify that no edges are palindromes (this impacts part B)
+# If any edges are palindromes, hopefully none of them are shared edges
+# If any shared edge is a palindrome, we can't use that shared edge to determine whether a new tile should or shouldn't be flipped along the orthogonal axis
+for i_count, tile_edge in enumerate(tile_edges.values):
+    if tile_edge[1] == tile_edge[1][::-1]:
+        print('WARNING! An edge that is a palindrome has been found!')
+        print(f'The edge is in tile # {tile_edge[0]}')
+
+# (end of Diagnostics)
+
 # Filter out all edges that appear only once: leaving edges that appear twice
 edges_appear_twice = tile_edges.groupby(['EdgeString'])['EdgeString'].filter(lambda x: x.count() == 2)
 
@@ -218,6 +232,7 @@ edges_appear_twice = tile_edges.groupby(['EdgeString'])['EdgeString'].filter(lam
 tilenumbers_dual_appearances = tile_edges[tile_edges.EdgeString.isin(edges_appear_twice.values)]['TileNumber']
 
 # Multiply together the tile numbers that have two edges that appear twice (these are corner edges).  This is the answer to part A.
+print(f'Below is a list of the tile numbers of the four corner tiles:')
 product_corner_tiles = 1
 for tilenumber in tilenumbers_dual_appearances.unique():
     if np.count_nonzero(tilenumbers_dual_appearances == tilenumber) == 2:
@@ -226,23 +241,22 @@ for tilenumber in tilenumbers_dual_appearances.unique():
 
 print(f'The answer to part A is {product_corner_tiles}\n')
 
-print('Tile# 1951 -- original')
-interior_points[1951].display()
-print()
+# print('Tile# 1951:  with edges, original')
+# interior_points[1951].display(True)
+# print()
 
-print('Tile# 1951 -- flipped horizontally')
-interior_points[1951]._flipped['horizontally'] = True
-interior_points[1951].display()
+# print('Tile# 1951:  no edges, original')
+# interior_points[1951].display()
+# print()
 
-print('Tile# 1951 -- rotated ninety degrees')
-interior_points[1951]._rotation = RotationStatus.NINETY_DEGREES
-interior_points[1951].display()
 
-print('Tile# 1951 -- rotated 180 degrees')
-interior_points[1951]._rotation = RotationStatus.ONE_EIGHTY_DEGREES
-interior_points[1951].display()
+interior_points[1951]._mosaic_position = (0,0)  # Later on .... arbitrarily choose any corner
+interior_points[1951]._flipped['horizontally'] = True # Later on .... do whatever flips are required to put shared edges on right and bottom
 
-print('Tile# 1951 -- rotated 270 degrees')
-interior_points[1951]._rotation = RotationStatus.TWO_SEVENTY_DEGREES
-interior_points[1951].display()
+# print('Tile# 1951:  no edges, and flipped horizontally')
+# interior_points[1951].display()
+
+# print('Tile# 1951:  with edges, and flipped horizontally')
+# interior_points[1951].display(True)
+# print()
 
