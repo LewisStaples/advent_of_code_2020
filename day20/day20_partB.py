@@ -158,7 +158,7 @@ def add_edge(tile_number, in_string, init_compass_point):
     tile_edges.loc[len(tile_edges.index)] = [tile_number, in_string, init_compass_point, reverse_status]
 
 # Reading input from the input file
-input_filename='input.txt'
+input_filename='input_sample0.txt'
 print(f'\nUsing input file: {input_filename}\n')
 with open(input_filename) as f:
     # Pull in each line from the input file
@@ -241,17 +241,28 @@ for tilenumber in tilenumbers_dual_appearances.unique():
 
 print(f'The answer to part A is {product_corner_tiles}\n')
 
-# print('Tile# 1951:  with edges, original')
-# interior_points[1951].display(True)
-# print()
-
-# print('Tile# 1951:  no edges, original')
-# interior_points[1951].display()
-# print()
-
-
-interior_points[1951]._mosaic_position = (0,0)  # Later on .... arbitrarily choose any corner
+# Take the first corner
+# Later on .... arbitrarily choose any corner
+interior_points[1951]._mosaic_position = (0,0)  
 interior_points[1951]._flipped['horizontally'] = True # Later on .... do whatever flips are required to put shared edges on right and bottom
+
+edges_to_investigate = [(1951, compass_status) for compass_status in CompassStatus]
+dummy = 123
+while len(edges_to_investigate) > 0:
+    edge_to_investigate = edges_to_investigate.pop()
+    # if e_t_i is shared by another tile:
+    # (1) get its edgeString from tile_edges
+    this_edgeString = tile_edges.loc[(tile_edges['TileNumber'] == edge_to_investigate[0]) & (tile_edges['InitCompassPoint'] == edge_to_investigate[1])].values[0][1]
+    # (2) see if any other tile_edges records have the same edgeString
+
+        # if interior_points[other_tile]._mosaic_position == None:
+            # assign new value of interior_points[other_tile]._mosaic_position
+            # realign other_tile's _interior_points to do what is needed for the edges to match
+            # add the other three edges of other_tile to e_t_i
+
+
+
+
 
 # print('Tile# 1951:  no edges, and flipped horizontally')
 # interior_points[1951].display()
