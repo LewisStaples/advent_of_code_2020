@@ -101,6 +101,7 @@ class InteriorPoints:
                     collection_of_points.add((a_transformed,b_transformed))
 
         # Traverse the collection of points and display
+        # (At this time, the edges are not being displayed)
         for i in range(len(self._interior_points[0])):
             # if show_edges:
             #     print('X', end='')
@@ -253,12 +254,19 @@ while len(edges_to_investigate) > 0:
     # if e_t_i is shared by another tile:
     # (1) get its edgeString from tile_edges
     this_edgeString = tile_edges.loc[(tile_edges['TileNumber'] == edge_to_investigate[0]) & (tile_edges['InitCompassPoint'] == edge_to_investigate[1])].values[0][1]
+    dummy = 123
     # (2) see if any other tile_edges records have the same edgeString
+    if len(tile_edges.loc[tile_edges['EdgeString'] == this_edgeString].values) > 1:
+        for this_edge in tile_edges.loc[tile_edges['EdgeString'] == this_edgeString].values:
+            if this_edge[0] == tile_edges['TileNumber']:
+                continue
+            # if interior_points[other_tile]._mosaic_position == None:
+                # assign new value of interior_points[other_tile]._mosaic_position
+                # realign other_tile's _interior_points to do what is needed for the edges to match
+                # add the other three edges of other_tile to e_t_i
+            if interior_points[this_edge[0]]._mosaic_position == None:
+                dummy = 123
 
-        # if interior_points[other_tile]._mosaic_position == None:
-            # assign new value of interior_points[other_tile]._mosaic_position
-            # realign other_tile's _interior_points to do what is needed for the edges to match
-            # add the other three edges of other_tile to e_t_i
 
 
 
