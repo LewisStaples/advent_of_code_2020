@@ -49,28 +49,19 @@ class Food:
                 allergens_and_rownums[allergen_labelled].append(line_num)
             else:
                 allergens_and_rownums[allergen_labelled] = [line_num]
-
                 allergen_ingredient_map[allergen_labelled] = None
 
-        dummy = 123
-
-
-
 # Reading input from the input file
-input_filename='input.txt'
-print(f'Using input file: {input_filename}')
+input_filename='input_sample0.txt'
+print(f'Using input file: {input_filename}\n')
 with open(input_filename) as f:
     # Pull in each line from the input file
     for i, in_string in enumerate(f):
         in_string = in_string.rstrip()
-        # print(in_string)
         food_list.append(Food(in_string, i))
-        dummy = 123
 
 # Loop until all allergens have been matched to their ingredient
 while None in allergen_ingredient_map.values():
-    # break
-
     # Loop through all allergens
     for allergen in allergen_ingredient_map:
         # Skip any allergens whose ingredient has already been identified
@@ -85,27 +76,10 @@ while None in allergen_ingredient_map.values():
 
         # Look at all foods associated with that allergen
         for rownum in allergens_and_rownums[allergen]:
-            # food_list[rownum]._ingredients
-            # dummy = 123
             ingredient_set &= set(food_list[rownum]._ingredients)
             if len(ingredient_set) == 1:
                 # It has been found !!!!!
-                dummy = 123
                 allergen_ingredient_map[allergen] = ingredient_set.pop()
-            dummy = 123
-
-        # # For all ingredients
-        # for ingredient in ingredients_and_freq:
-        #     # Skip any ingredient that hasn't yet been mapped to an allergen
-        #     if ingredient in allergen_ingredient_map.values():
-        #         continue # try next ingredient
-        #     dummy = 123
-        #     # for food in food_list
-        # break
-
-    # break
-
-dummy = 123
 
 set_ingredients_without_listed_allergens = set(ingredients_and_freq.keys()) - set(allergen_ingredient_map.values())
 
@@ -113,6 +87,16 @@ total_appearances = 0
 for ing in set_ingredients_without_listed_allergens:
     total_appearances += ingredients_and_freq[ing]
 
-print(total_appearances)
+print(f'The answer to part A is : {total_appearances}')
 
+canonical_dangerous_ingredient_list__str = ''
+allergen_list = list(allergen_ingredient_map.keys())
+allergen_list.sort()
+
+for i, allergen in enumerate(allergen_list):
+    if i > 0:
+        canonical_dangerous_ingredient_list__str += ','
+    canonical_dangerous_ingredient_list__str += allergen_ingredient_map[allergen]
+
+print(f'The answer to part B is : {canonical_dangerous_ingredient_list__str}')
 
