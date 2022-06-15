@@ -1,32 +1,30 @@
-# adventOfCode 2020 day 21, Part A
+# adventOfCode 2020 day 21
 # https://adventofcode.com/2020/day/21
 
-# Thinking through data and algorithm ...
+# Notes related to the data:
 # Each allergen is found in only one ingredient.
 # Each ingredient has either 0 or 1 allergens.
 # For all foods, all ingredients must be listed.
 # Some foods may omit some allergens.
-# 
-# Create a dict with all listed allergens as the keys
-#   Each listed allergen will have exactly one associated ingredient as its value (initialized to None ... for not yet known)
-#
-# Compile a dict with all ingredients as the keys
-#   The key will be the number of times the ingredient appears in the list of foods
-#
-# Go through allergen list, one at a time
-#   For this allergen look at all foods (rows) that that allergen is listed as being in
-#   Compile a list of all ingredients in those rows that isn't associated with any allergen.
-#   If you find that all only one ingredient appears in all of these rows
-#       that allergen should be associated with that ingredient
-#       and you don't need to revisit that allergen anymore
 
-# Repeat until there are no more allergens with non yet determined ingredients.
-
+# This is a list of Food objects
 food_list = []
+
+# This dict has all ingredients as the keys,
+# and the value is how many foods has that ingredient
 ingredients_and_freq = dict()
+
+# This dict has allergen as keys, list of 'rownums' as the values
+# (rownum is row number in the original text file, and more importantly
+# it is the index of the subsequent Food object in food_list )
 allergens_and_rownums = dict()
+
+# This dict has allergen as key, ingredient as the value
+# (Note: any ingredients without a listed allergen will never be listed here)
 allergen_ingredient_map = dict()
 
+# Each line of input lists the ingredients and listed allergens for a particular food
+# The data for a given food is represented in class Food
 class Food:
     def __init__(self, str_input, line_num):
         # Parse input, create the Food object
@@ -43,7 +41,7 @@ class Food:
             else:
                 ingredients_and_freq[ingredient] = 1
 
-        # Update allergens_and_rownums
+        # Update allergens_and_rownums, initialize allergen_ingredient_map to None
         for allergen_labelled in self._allergens_labelled:
             if allergen_labelled in allergens_and_rownums:
                 allergens_and_rownums[allergen_labelled].append(line_num)
@@ -56,9 +54,11 @@ input_filename='input_sample0.txt'
 print(f'Using input file: {input_filename}\n')
 with open(input_filename) as f:
     # Pull in each line from the input file
+    # (each line will be represented as a Food object in food_list)
     for i, in_string in enumerate(f):
         in_string = in_string.rstrip()
         food_list.append(Food(in_string, i))
+# At this point, all input has been read in from input_filename
 
 # Loop until all allergens have been matched to their ingredient
 while None in allergen_ingredient_map.values():
@@ -71,32 +71,42 @@ while None in allergen_ingredient_map.values():
 
         # Consider all ingredients
         ingredient_set = set(ingredients_and_freq.keys())
-        # Exclude ingredients that have already been discovered
+        # Exclude ingredients that have already been associated with an allergen
         ingredient_set -= set(allergen_ingredient_map.values())
 
-        # Look at all foods associated with that allergen
+        # Look at all foods associated with that 
+        # (not yet assocated with an ingredient) allergen
         for rownum in allergens_and_rownums[allergen]:
+            # Narrow set: (old) ingredients not yet associated with an allergen
+            # and (new) ingredients associated with this Food
             ingredient_set &= set(food_list[rownum]._ingredients)
-            if len(ingredient_set) == 1:
-                # It has been found !!!!!
-                allergen_ingredient_map[allergen] = ingredient_set.pop()
 
+            # If there is only a single ingredient that is (2) not associated
+            # with any allergens yet, and (2) associated with this Food
+            if len(ingredient_set) == 1:
+                # We now know that this ingredient and allergen are related
+                allergen_ingredient_map[allergen] = ingredient_set.pop()
+# At this point, all allergens have been matched to their ingredient
+
+# Create a set all all ingredients that don't have any listed allergens
 set_ingredients_without_listed_allergens = set(ingredients_and_freq.keys()) - set(allergen_ingredient_map.values())
 
-total_appearances = 0
+# Calculate and display the answer to part A
+count_appearances_nonallergenic_ingredients = 0
 for ing in set_ingredients_without_listed_allergens:
-    total_appearances += ingredients_and_freq[ing]
+    count_appearances_nonallergenic_ingredients += ingredients_and_freq[ing]
+print(f'The answer to part A is: {count_appearances_nonallergenic_ingredients}')
 
-print(f'The answer to part A is : {total_appearances}')
-
+# Calculate and display the answer to part B
+# ("canonical dangerous ingredient list" is a list of ingredients
+# known to be associated with an allergen, sorted by the list of
+# all associated allergens)
 canonical_dangerous_ingredient_list__str = ''
 allergen_list = list(allergen_ingredient_map.keys())
 allergen_list.sort()
-
 for i, allergen in enumerate(allergen_list):
     if i > 0:
         canonical_dangerous_ingredient_list__str += ','
     canonical_dangerous_ingredient_list__str += allergen_ingredient_map[allergen]
-
-print(f'The answer to part B is : {canonical_dangerous_ingredient_list__str}')
+print(f'The answer to part B is: {canonical_dangerous_ingredient_list__str}')
 
