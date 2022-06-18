@@ -1,20 +1,62 @@
-# adventOfCode 2020 day 22
-# https://adventofcode.com/202-/day/22
+import copy
 
-round_number = 0 # Testing only
-player_id = None
-decks_of_cards = dict() # ID: player_id, value: list of cards (int values)
+class Game:
+    next_gameID = 1
 
-set__decks_of_cards = set() # Note that the deck_of_cards in this set are a different datatype than the above dict
+    def __init__(self, decks):
+        self._gameID = Game.next_gameID
+        self._round_counter = 0
+        self._set__decks_of_cards = set()
 
-def continue_playing():
-    for deck in decks_of_cards.values():
-        if len(deck) == 0:
-            return False
-    return True
+        # This assumes that there will always be players 1 and 2
+        self._decks = {1: [], 2: []}
+        Game.next_gameID += 1
+
+        if decks is not None:
+            # initialize with deck information
+            # copy to new deck object ... use copy.deep()
+            # then modify the copy
+            dummy = 123   
+
+    def card_input(self, player_id, card):
+        self._decks[player_id].append(card)
+
+    def do_round(self):
+        self._round_counter += 1
+        print(f'-- Round {self._round_counter} (Game {self._gameID}) --')
+
+        # Store the current deck states
+        self._set__decks_of_cards.add(
+            (
+                tuple(self._decks[1]),
+                tuple(self._decks[2])
+            )
+        )
+
+        # Each player draws a card
+        player1card = self._decks[1].pop(0)
+        player2card = self._decks[2].pop(0)
+
+        # Verify if the newest deck state was seen before ("repeat")
+        # (If there are not repeats the set's length will equal the round_number,
+        # whereas the first repeat will cause the length to be less than the round_number)
+        if len(self._set__decks_of_cards) < self._round_counter:
+            # Player 1 wins
+            self._decks[1].append(player1card)
+            self._decks[1].append(player2card)
+            return
+
+        # See if a recursive game should be played
+
+        # If not using a recursive game, then play with the rules from part (a)
+        if player1card > player2card:
+            self._decks[1].append(player1card)
+            self._decks[2].append(player2card)
+            
+game_list = [Game(None)]
 
 # Reading input from the input file
-input_filename='input_scenario0_repeat_round.txt'
+input_filename='input_sample0.txt'
 print(f'\nUsing input file: {input_filename}\n')
 with open(input_filename) as f:
     # Pull in each line from the input file
@@ -25,57 +67,12 @@ with open(input_filename) as f:
         if in_string[0] == 'P':
             dummy, player_id_string = in_string.split()
             player_id = int(player_id_string[:-1])
-            decks_of_cards[player_id] = []
         else:
-            card_value = int(in_string)
-            decks_of_cards[player_id].append(card_value)
+            game_list[0].card_input(player_id, int(in_string))
 
-while continue_playing():
+while len(game_list) > 0:
+    game_list[-1].do_round()
+    break
 
-    round_number += 1 # Testing only
-    print(f'-- Round {round_number} --') # Testing only
 
-    # Store the current deck states
-    set__decks_of_cards.add(
-        (
-            tuple(decks_of_cards[1]),
-            tuple(decks_of_cards[2])
-        )
-    )
 
-    # Verify if the newest deck state was seen before ("repeat")
-    # (If there are not repeats the set's length will equal the round_number,
-    # whereas the first repeat will cause the length to be less than the round_number)
-    if len(set__decks_of_cards) < round_number:
-        # Player 1 wins
-        decks_of_cards[1].append(cards_this_round.pop(1))
-        decks_of_cards[1].append(cards_this_round.pop(2))
-        break
-    # Draw cards
-    cards_this_round = {}
-    for player_id in decks_of_cards:
-        print(f"Player {player_id}'s deck: {decks_of_cards[player_id]}") # Testing only
-        cards_this_round[player_id] = decks_of_cards[player_id].pop(0)
-
-    for player_id in decks_of_cards: # Testing only
-        print(f'Player {player_id} plays: {cards_this_round[player_id]}') # Testing only
-    # Determine the winning card
-    winning_card = max(cards_this_round.values())
-
-    # Determine the player_id of the winner
-    winner_player_id = None
-    for player_id in cards_this_round:
-        if winning_card == cards_this_round[player_id]:
-            # The winner has been found
-            print(f'Player {player_id} wins the round!') # Testing only
-            break
-
-    decks_of_cards[player_id].append(cards_this_round.pop(player_id))
-    decks_of_cards[player_id].append(cards_this_round.popitem()[1])
-
-ans_A = 0
-while len(decks_of_cards[player_id]) > 0:
-    ans_A += len(decks_of_cards[player_id]) * decks_of_cards[player_id].pop(0)
-dummy = 123
-
-print(f'The answer to part A is: {ans_A}\n')
