@@ -5,17 +5,24 @@ class Game:
 
     def __init__(self, decks):
         self._gameID = Game.next_gameID
-        self._round_counter = 0
-        self._set__decks_of_cards = set()
-
-        # This assumes that there will always be players 1 and 2
-        self._decks = {1: [], 2: []}
         Game.next_gameID += 1
 
+        self._round_counter = 0
+        self._set__decks_of_cards = set()
+        # This assumes that there will always be players 1 and 2
+        self._decks = {1: [], 2: []}
+        
+
         if decks is not None:
-            # initialize with deck information
-            # copy to new deck object ... use copy.deep()
-            # then modify the copy
+            # note it's been copied with copy.deepcopy()
+            self._decks = decks
+
+            # modify the deep copy
+            del self._decks[1][1+self._decks[1][0]:]
+            del self._decks[2][1+self._decks[2][0]:]
+            self._decks[1].pop(0)
+            self._decks[2].pop(0)
+
             dummy = 123   
 
     def card_input(self, player_id, card):
@@ -55,7 +62,12 @@ class Game:
         if len(self._decks[1]) > self._decks[1][0]:
             if len(self._decks[2]) > self._decks[2][0]:
                 # Create cursive object
-                dummy = 123 # fill this in !!!!!
+                Game(copy.deepcopy(self._decks))
+                
+                # return from do_round, so a new round will start using the newest copy
+                return
+                dummy = 123
+
 
         # If not using a recursive game, then play with the rules from part (a)
         if self._player1card > self._player2card:
@@ -84,7 +96,7 @@ with open(input_filename) as f:
 
 while len(game_list) > 0:
     game_list[-1].do_round()
-    break
+    # break
 
 
 
