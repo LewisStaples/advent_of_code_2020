@@ -12,19 +12,20 @@ class Game:
 
         self._round_counter = 0
         self._set__decks_of_cards = set()
-        # This assumes that there will always be players 1 and 2
-        self._decks = {1: [], 2: []}
-        
 
+        if decks is None:
+            # This assumes that there will always be players 1 and 2
+            self._decks = {1: [], 2: []}
+        
         if decks is not None:
-            # note it's been copied with copy.deepcopy()
+        #     # note it's been copied with copy.deepcopy()
             self._decks = decks
 
-            # modify the deep copy
-            del self._decks[1][1+self._decks[1][0]:]
-            del self._decks[2][1+self._decks[2][0]:]
-            self._decks[1].pop(0)
-            self._decks[2].pop(0)
+        #     # modify the deep copy: consider only the number of cards needed
+        #     del self._decks[1][1+self._decks[1][0]:]
+        #     del self._decks[2][1+self._decks[2][0]:]
+        #     # self._decks[1].pop(0)
+        #     # self._decks[2].pop(0)
 
             dummy = 123   
 
@@ -34,6 +35,8 @@ class Game:
     def record_win_for_round(self, winning_playerID):
             self._decks[winning_playerID].append(max(self._player1card, self._player2card))
             self._decks[winning_playerID].append(min(self._player1card, self._player2card))
+            # Use this to "label" this Game's round as completed
+            self._player1card = self._player2card = None
 
             # Output to match sample output
             print(f"Player {winning_playerID} wins the round!\n") # {self._round_counter} of game {self._gameID}!")
@@ -45,11 +48,15 @@ class Game:
                 game_list.pop()
 
     def do_round(self):
+        # # Do these steps if it is a new round
+        # if self._player1card is not None:
+
         self._round_counter += 1
 
         if self._round_counter > 10:
             sys.exit('Counter value is too high: stopping to prevent infinite loop')
-
+        if self._gameID > 10:
+            sys.exit('game_id value is too high: stopping to prevent infinite loop')
         # Output to match sample output
         print(f'-- Round {self._round_counter} (Game {self._gameID}) --')
         print(f"Player 1's deck: {self._decks[1]}")
@@ -82,10 +89,22 @@ class Game:
         # See if a recursive game should be played
         if len(self._decks[1]) >= self._player1card:
             if len(self._decks[2]) >= self._player2card:
-                # Create cursive object
+                # Create new game (recursive)
                 print('Playing a sub-game to determine the winner...\n')
                 game_list.append(Game(copy.deepcopy(self._decks)))
                 
+                # Modify new game (make it look the same as a non-recursive game)
+                # game_list[-1]._decks[1].insert(0, self._player1card)
+                # game_list[-1]._decks[2].insert(0, self._player2card)
+                # game_list[-1]._player1card = game_list[-1]._player2card = None
+
+                # reduce number of cards .....
+                del game_list[-1]._decks[1][self._player1card:]
+                del game_list[-1]._decks[2][self._player2card:]
+
+        #     del self._decks[1][1+self._decks[1][0]:]
+        #     del self._decks[2][1+self._decks[2][0]:]
+
                 # return from do_round, so a new round will start using the newest copy
                 return
 
