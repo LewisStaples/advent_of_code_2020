@@ -31,19 +31,24 @@ class Game:
     def card_input(self, player_id, card):
         self._decks[player_id].append(card)
 
-    def record_win(self, winning_playerID):
+    def record_win_for_round(self, winning_playerID):
             self._decks[winning_playerID].append(max(self._player1card, self._player2card))
             self._decks[winning_playerID].append(min(self._player1card, self._player2card))
 
             # Output to match sample output
             print(f"Player {winning_playerID} wins the round!\n") # {self._round_counter} of game {self._gameID}!")
-            # Player 2 wins round 8 of game 1!
+
+            # Check if this round's loser has lost this game
+            losing_playerID = 1 if winning_playerID == 2 else 2
+            if len(self._decks[losing_playerID]) == 0:
+                print(f"The winner of game {self._gameID} is player {winning_playerID}!")
+                game_list.pop()
 
     def do_round(self):
         self._round_counter += 1
 
         if self._round_counter > 10:
-            sys.exit(-1)
+            sys.exit('Counter value is too high: stopping to prevent infinite loop')
 
         # Output to match sample output
         print(f'-- Round {self._round_counter} (Game {self._gameID}) --')
@@ -71,7 +76,7 @@ class Game:
             # Player 1 wins
             # self._decks[1].append(self._player1card)
             # self._decks[1].append(self._player2card)
-            self.record_win(1)
+            self.record_win_for_round(1)
             return
 
         # See if a recursive game should be played
@@ -83,16 +88,13 @@ class Game:
                 
                 # return from do_round, so a new round will start using the newest copy
                 return
-                dummy = 123
-
 
         # If not using a recursive game, then play with the rules from part (a)
         if self._player1card > self._player2card:
-            self.record_win(1)
+            self.record_win_for_round(1)
         else:
-            self.record_win(2)
-            # self._decks[1].append(self._player1card)
-            # self._decks[1].append(self._player2card)
+            self.record_win_for_round(2)
+
 
 input_filename='input_sample0.txt'
 
