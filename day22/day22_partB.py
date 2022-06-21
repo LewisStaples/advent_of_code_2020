@@ -1,10 +1,13 @@
 import copy
+import sys
 
 class Game:
     next_gameID = 1
 
     def __init__(self, decks):
         self._gameID = Game.next_gameID
+
+        print(f"=== Game {self._gameID} ===")
         Game.next_gameID += 1
 
         self._round_counter = 0
@@ -29,12 +32,25 @@ class Game:
         self._decks[player_id].append(card)
 
     def record_win(self, winning_playerID):
-            self._decks[winning_playerID].append(self._player1card)
-            self._decks[winning_playerID].append(self._player2card)
+            self._decks[winning_playerID].append(max(self._player1card, self._player2card))
+            self._decks[winning_playerID].append(min(self._player1card, self._player2card))
+
+            # Output to match sample output
+            print(f"Player {winning_playerID} wins the round!\n") # {self._round_counter} of game {self._gameID}!")
+            # Player 2 wins round 8 of game 1!
 
     def do_round(self):
         self._round_counter += 1
+
+        if self._round_counter > 10:
+            sys.exit(-1)
+
+        # Output to match sample output
         print(f'-- Round {self._round_counter} (Game {self._gameID}) --')
+        print(f"Player 1's deck: {self._decks[1]}")
+        print(f"Player 2's deck: {self._decks[2]}")
+        print(f"Player 1 plays: {self._decks[1][0]}")
+        print(f"Player 2 plays: {self._decks[2][0]}")
 
         # Store the current deck states
         self._set__decks_of_cards.add(
@@ -59,10 +75,11 @@ class Game:
             return
 
         # See if a recursive game should be played
-        if len(self._decks[1]) > self._decks[1][0]:
-            if len(self._decks[2]) > self._decks[2][0]:
+        if len(self._decks[1]) >= self._player1card:
+            if len(self._decks[2]) >= self._player2card:
                 # Create cursive object
-                Game(copy.deepcopy(self._decks))
+                print('Playing a sub-game to determine the winner...\n')
+                game_list.append(Game(copy.deepcopy(self._decks)))
                 
                 # return from do_round, so a new round will start using the newest copy
                 return
@@ -77,10 +94,11 @@ class Game:
             # self._decks[1].append(self._player1card)
             # self._decks[1].append(self._player2card)
 
+input_filename='input_sample0.txt'
+
 game_list = [Game(None)]
 
 # Reading input from the input file
-input_filename='input_sample0.txt'
 print(f'\nUsing input file: {input_filename}\n')
 with open(input_filename) as f:
     # Pull in each line from the input file
