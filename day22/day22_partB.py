@@ -7,7 +7,7 @@ class Game:
     def __init__(self, decks):
         self._gameID = Game.next_gameID
 
-        print(f"=== Game {self._gameID} ===")
+        print(f"=== Game {self._gameID} ===\n")
         Game.next_gameID += 1
 
         self._round_counter = 0
@@ -43,20 +43,27 @@ class Game:
 
             # Check if this round's loser has lost this game
             losing_playerID = 1 if winning_playerID == 2 else 2
-            if len(self._decks[losing_playerID]) == 0:
-                print(f"The winner of game {self._gameID} is player {winning_playerID}!")
-                game_list.pop()
+            if len(self._decks[losing_playerID]) != 0:
+                return 0
+            
+            # There is a winner for this game
+            print(f"The winner of game {self._gameID} is player {winning_playerID}!\n")
+            game_list.pop()
 
-    def do_round(self):
+            print(f"...anyway, back to game {game_list[-1]._gameID}")
+            print(f"Player {winning_playerID} wins round {game_list[-1]._round_counter} of game {game_list[-1]._gameID}!")
+            return winning_playerID
+
+    def do_round_forward(self):
         # # Do these steps if it is a new round
         # if self._player1card is not None:
 
         self._round_counter += 1
 
-        if self._round_counter > 10:
-            sys.exit('Counter value is too high: stopping to prevent infinite loop')
-        if self._gameID > 10:
-            sys.exit('game_id value is too high: stopping to prevent infinite loop')
+        # if self._round_counter > 10:
+        #     sys.exit('Counter value is too high: stopping to prevent infinite loop')
+        # if self._gameID > 10:
+        #     sys.exit('game_id value is too high: stopping to prevent infinite loop')
         # Output to match sample output
         print(f'-- Round {self._round_counter} (Game {self._gameID}) --')
         print(f"Player 1's deck: {self._decks[1]}")
@@ -83,8 +90,8 @@ class Game:
             # Player 1 wins
             # self._decks[1].append(self._player1card)
             # self._decks[1].append(self._player2card)
-            self.record_win_for_round(1)
-            return
+            return self.record_win_for_round(1)
+            # return
 
         # See if a recursive game should be played
         if len(self._decks[1]) >= self._player1card:
@@ -106,14 +113,26 @@ class Game:
         #     del self._decks[2][1+self._decks[2][0]:]
 
                 # return from do_round, so a new round will start using the newest copy
-                return
+                return 0
 
         # If not using a recursive game, then play with the rules from part (a)
         if self._player1card > self._player2card:
-            self.record_win_for_round(1)
+            return self.record_win_for_round(1)
         else:
-            self.record_win_for_round(2)
+            return self.record_win_for_round(2)
 
+    def do_round_backward(self, last_round_result):
+        dummy = 123
+
+        player_card = {
+            1: self._player1card,
+            2: self._player2card
+        }
+
+        losing_card = 1 if last_round_result == 2 else 2
+
+        self._decks[last_round_result].append(player_card[last_round_result])
+        self._decks[last_round_result].append(player_card[losing_card])
 
 input_filename='input_sample0.txt'
 
@@ -133,9 +152,15 @@ with open(input_filename) as f:
         else:
             game_list[0].card_input(player_id, int(in_string))
 
+last_round_result = 0
 while len(game_list) > 0:
-    game_list[-1].do_round()
-    # break
+    # if game_list[-1]._player1card is None:
+    if last_round_result == 0:
+        last_round_result = game_list[-1].do_round_forward()
+        dummy = 123
+    else:
+        game_list[-1].do_round_backward(last_round_result)
+        last_round_result = 0
 
 
 
