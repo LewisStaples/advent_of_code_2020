@@ -7,7 +7,7 @@ class Game:
     def __init__(self, decks):
         self._gameID = Game.next_gameID
 
-        print(f"=== Game {self._gameID} ===\n")
+        # print(f"=== Game {self._gameID} ===\n")
         Game.next_gameID += 1
 
         self._round_counter = 0
@@ -39,7 +39,7 @@ class Game:
             self._player1card = self._player2card = None
 
             # Output to match sample output
-            print(f"Player {winning_playerID} wins the round!\n") # {self._round_counter} of game {self._gameID}!")
+            # print(f"Player {winning_playerID} wins the round!\n") # {self._round_counter} of game {self._gameID}!")
 
             # Check if this round's loser has lost this game
             losing_playerID = 1 if winning_playerID == 2 else 2
@@ -47,11 +47,21 @@ class Game:
                 return 0
             
             # There is a winner for this game
-            print(f"The winner of game {self._gameID} is player {winning_playerID}!\n")
+            # print(f"The winner of game {self._gameID} is player {winning_playerID}!\n")
+
+            if len(game_list) == 1:
+                # print('End of last game has been reached!')
+                # print(game_list[-1]._decks[winning_playerID])
+                ans_B = 0
+                while len(game_list[-1]._decks[player_id]) > 0:
+                    ans_B += len(game_list[-1]._decks[winning_playerID]) * game_list[-1]._decks[winning_playerID].pop(0)
+                dummy = 123
+                print(f'The answer to part B is: {ans_B}\n')
+                sys.exit('The end')
             game_list.pop()
 
-            print(f"...anyway, back to game {game_list[-1]._gameID}")
-            print(f"Player {winning_playerID} wins round {game_list[-1]._round_counter} of game {game_list[-1]._gameID}!")
+            # print(f"...anyway, back to game {game_list[-1]._gameID}")
+            # print(f"Player {winning_playerID} wins round {game_list[-1]._round_counter} of game {game_list[-1]._gameID}!")
             return winning_playerID
 
     def do_round_forward(self):
@@ -65,11 +75,11 @@ class Game:
         # if self._gameID > 10:
         #     sys.exit('game_id value is too high: stopping to prevent infinite loop')
         # Output to match sample output
-        print(f'-- Round {self._round_counter} (Game {self._gameID}) --')
-        print(f"Player 1's deck: {self._decks[1]}")
-        print(f"Player 2's deck: {self._decks[2]}")
-        print(f"Player 1 plays: {self._decks[1][0]}")
-        print(f"Player 2 plays: {self._decks[2][0]}")
+        # print(f'-- Round {self._round_counter} (Game {self._gameID}) --')
+        # print(f"Player 1's deck: {self._decks[1]}")
+        # print(f"Player 2's deck: {self._decks[2]}")
+        # print(f"Player 1 plays: {self._decks[1][0]}")
+        # print(f"Player 2 plays: {self._decks[2][0]}")
 
         # Store the current deck states
         self._set__decks_of_cards.add(
@@ -97,7 +107,7 @@ class Game:
         if len(self._decks[1]) >= self._player1card:
             if len(self._decks[2]) >= self._player2card:
                 # Create new game (recursive)
-                print('Playing a sub-game to determine the winner...\n')
+                # print('Playing a sub-game to determine the winner...\n')
                 game_list.append(Game(copy.deepcopy(self._decks)))
                 
                 # Modify new game (make it look the same as a non-recursive game)
