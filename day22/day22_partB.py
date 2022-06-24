@@ -32,7 +32,7 @@ class Game:
     def card_input(self, player_id, card):
         self._decks[player_id].append(card)
 
-    def record_win_for_round(self, winning_playerID):
+    def record_win_for_round(self, winning_playerID, repeated_card):
             self._decks[winning_playerID].append(max(self._player1card, self._player2card))
             self._decks[winning_playerID].append(min(self._player1card, self._player2card))
             # Use this to "label" this Game's round as completed
@@ -44,16 +44,17 @@ class Game:
             # Check if this round's loser has lost this game
             losing_playerID = 1 if winning_playerID == 2 else 2
             if len(self._decks[losing_playerID]) != 0:
-                return 0
+                if not repeated_card:
+                    return 0
             
             # There is a winner for this game
             # print(f"The winner of game {self._gameID} is player {winning_playerID}!\n")
 
             if len(game_list) == 1:
-                # print('End of last game has been reached!')
-                # print(game_list[-1]._decks[winning_playerID])
+                print('End of last game has been reached!')
+                print(game_list[-1]._decks[winning_playerID])
                 ans_B = 0
-                while len(game_list[-1]._decks[player_id]) > 0:
+                while len(game_list[-1]._decks[winning_playerID]) > 0:
                     ans_B += len(game_list[-1]._decks[winning_playerID]) * game_list[-1]._decks[winning_playerID].pop(0)
                 dummy = 123
                 print(f'The answer to part B is: {ans_B}\n')
@@ -100,7 +101,7 @@ class Game:
             # Player 1 wins
             # self._decks[1].append(self._player1card)
             # self._decks[1].append(self._player2card)
-            return self.record_win_for_round(1)
+            return self.record_win_for_round(1, True)
             # return
 
         # See if a recursive game should be played
@@ -127,9 +128,9 @@ class Game:
 
         # If not using a recursive game, then play with the rules from part (a)
         if self._player1card > self._player2card:
-            return self.record_win_for_round(1)
+            return self.record_win_for_round(1, False)
         else:
-            return self.record_win_for_round(2)
+            return self.record_win_for_round(2, False)
 
     def do_round_backward(self, last_round_result):
         dummy = 123
@@ -144,7 +145,7 @@ class Game:
         self._decks[last_round_result].append(player_card[last_round_result])
         self._decks[last_round_result].append(player_card[losing_card])
 
-input_filename='input_sample0.txt'
+input_filename='input.txt'
 
 game_list = [Game(None)]
 
