@@ -1,8 +1,6 @@
 # adventOfCode 2020 day 23 (Part A)
 # https://adventofcode.com/2020/day/23
 
-from operator import index
-
 class CupCircle:
     def __init__(self, in_string):
         self._cups = []
