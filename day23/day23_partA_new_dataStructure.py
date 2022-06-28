@@ -15,11 +15,6 @@ class CupCircle:
         self._cups.pop(None)
         self._current_cup_value = int(in_string[0])
 
-            # self._cups.append(int(ch))
-
-
-        # self._current_cup_value = self._cups[0]
-
     def display_cups(self):
         prev = self._current_cup_value
         cup_str = f'cups: ({prev}) '
@@ -32,14 +27,6 @@ class CupCircle:
             prev = self._cups[prev]
         print(cup_str)
 
-#         cup_str = 'cups: '
-#         for cup in self._cups:
-#             if cup == self._current_cup_value:
-#                 cup_str += '(' + str(cup) + ') '
-#             else:
-#                 cup_str += str(cup) + ' '
-#         print(cup_str)
-
     def pickup_three_cups(self):
         while len(self._pickedup) < 3:
             self._pickedup.append(self._cups[self._current_cup_value])
@@ -47,26 +34,11 @@ class CupCircle:
             self._cups.pop(self._pickedup[-1])
             dummy = 123
 
-#         while len(self._pickedup) < 3:
-#             pickup_index = self._cups.index(self._current_cup_value) + 1
-#             if pickup_index >= len(self._cups):
-#                 pickup_index -= len(self._cups)
-#             self._pickedup.append(self._cups.pop(pickup_index))
-
-    # def putdown_three_cups(self, destination_value):
-#         # determine destination_index from destination_value
-        # destination_index = self._cups.index(destination_value) + 1
-#         if destination_index >= len(self._cups):
-#             destination_index -= len(self._cups)
-#         while len(self._pickedup) > 0:
-#             self._cups.insert(destination_index, self._pickedup.pop())
-#             dummy = 123
-#         dummy = 123
-
-#         if destination_index < self._cups.index(self._current_cup_value):
-#             # need to shuffle three digits
-#             for i in range(3):
-#                 self._cups.append(self._cups.pop(0))
+    def putdown_three_cups(self, destination_value):
+        while len(self._pickedup) > 0:
+            cup_to_put_down = self._pickedup.pop()
+            self._cups[cup_to_put_down] = self._cups[destination_value]
+            self._cups[destination_value] = cup_to_put_down
 
     def display_pickedup(self):
         print('pick up: ', end='')
@@ -86,13 +58,8 @@ class CupCircle:
                 destination_value = max(self._cups)
             return destination_value
 
-#     def select_new_current_cup(self):
-#         index_current_cup = self._cups.index(self._current_cup_value)
-#         index_current_cup += 1
-#         if index_current_cup == len(self._cups):
-#             index_current_cup += 0
-        
-#         self._current_cup_value = self._cups[index_current_cup]
+    def select_new_current_cup(self):
+        self._current_cup_value = self._cups[self._current_cup_value]
 
     def do_move(self, i):
         print(f'-- move {i} --') # for debugging only
@@ -103,13 +70,12 @@ class CupCircle:
         destination_value = self.select_destination()
         print(f'destination: {destination_value}') # for debugging only
 
-        # self.putdown_three_cups(destination_value)
-#         print() # for debugging only
-#         self.select_new_current_cup()
+        self.putdown_three_cups(destination_value)
+        print() # for debugging only
+        self.select_new_current_cup()
 
 # Reading input from the input file
 input_filename='input_sample1.txt'
-# input_filename='input.txt'
 print(f'\nUsing input file: {input_filename}\n')
 with open(input_filename) as f:
     in_string = f.readline().rstrip()
@@ -120,23 +86,23 @@ cup_circle = CupCircle(in_string)
 
 dummy = 123
 
-
-for i in range(1,11):
+for i in range(1,101):
     cup_circle.do_move(i)
 
-# print('-- final --')
+print('-- final --')
 cup_circle.display_cups()
-# print()
+print()
 
-# # Construct part A output
-# partA_output = ''
-# index_partA_output = cup_circle._cups.index(1)
-# while len(partA_output) < len(cup_circle._cups) - 1:
-#     index_partA_output += 1
-#     if index_partA_output == len(cup_circle._cups):
-#         index_partA_output = 0
-#     partA_output += str(cup_circle._cups[index_partA_output])
-#     dummy = 123
-
-# print(f'The output for part A is {partA_output}\n')
-
+# Construct part A output
+partA_output = ''
+prev = 1
+while True:
+    new_cup = cup_circle._cups[prev]
+    if new_cup == 1:
+        break
+    # implicit else:
+    prev = new_cup
+    partA_output += str(new_cup)
+    
+print(f'The output for part A is {partA_output}')
+print(f'when using input file: {input_filename}\n')
