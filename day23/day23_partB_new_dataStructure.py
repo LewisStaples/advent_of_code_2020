@@ -2,10 +2,8 @@
 # https://adventofcode.com/2020/day/23
 
 class CupCircle:
+    # This initializes the CupCircle object
     def __init__(self, in_string):
-
-        # self.LAST_VALUE IS WHATEVER THE HIGHEST NUMBERED CUP WILL BE
-        # self.LAST_VALUE = 15
         self.LAST_VALUE = 1000000
         self._cups = dict()
         self._pickedup = []
@@ -26,13 +24,14 @@ class CupCircle:
         for i in range(first_auto_cup + 1, last_auto_cup + 1):
             self._cups[previous] = previous + 1
             previous += 1
-            dummy = 123
 
         self._current_cup_value = int(in_string[0])
+        # The reason for self._cups['MAX'] is to avoid running the max function
+        # in any loops ... that was making the program run too slowly.
         self._cups['MAX'] = self.LAST_VALUE
 
-    # Revising to accomodate display at end for testing part B
-    # Display the two cups "clockwise" of cup 1 at the end
+    # This function displays the values the two cups that are clockwise of cup 1.
+    # And then it shows the value of those two cups' labels multipled together.
     def display_cups(self):
 
         print('Cups that are clockwise of cup 1:')
@@ -42,21 +41,16 @@ class CupCircle:
         print(f'SecondCup: {SecondCup}')
         print(f'Product of both above (answer to part B) is {FirstCup*SecondCup}')
 
-    # Revising for only 1 or 2 digit cup labels
+    # This function displays cups labels (note restrictions below)
+    # This aligns cup labels as if all cup labels were one or two digits.
+    # This only shows up to 16 cups "downstream" from the current cup.
     def display_cups_max_two_digits(self):
         prev = self._current_cup_value
-        # cup_str = f'cups: ({prev}) '
         cup_str = 'cups: ('
         if prev < 10:
             cup_str += ' '
         cup_str += f'{prev}) '
-        
-        # for i in range(8):
-        # while prev != self.LAST_VALUE:
-        # while prev != self._current_cup_value:
-        # while True:
-        # while self._cups[prev] != self._current_cup_value:
-        
+    
         for i in range(16):
             if self._cups[prev] == self._current_cup_value:
                 break
@@ -65,17 +59,18 @@ class CupCircle:
             cup_str += str(self._cups[prev]) + ' '
             prev = self._cups[prev]
         print(cup_str)
-        dummy = 123
 
+    # This function picks up three cups clockwise of the current cup
+    # (It also updates the stored value of the maximum cup)
     def pickup_three_cups(self):
         while len(self._pickedup) < 3:
             self._pickedup.append(self._cups[self._current_cup_value])
             self._cups[self._current_cup_value] = self._cups[self._pickedup[-1]]
             self._cups.pop(self._pickedup[-1])
-            dummy = 123
         while self._cups['MAX'] in self._pickedup:
             self._cups['MAX'] -= 1
-            
+    
+    # This function puts down three cups clockwise of the destination
     def putdown_three_cups(self, destination_value):
         while len(self._pickedup) > 0:
             cup_to_put_down = self._pickedup.pop()
@@ -83,13 +78,14 @@ class CupCircle:
             self._cups[destination_value] = cup_to_put_down
         self._cups['MAX'] = self.LAST_VALUE
 
+    # This function displays the three picked up cups
     def display_pickedup(self):
         print('pick up: ', end='')
         for i in range(len(self._pickedup)):
             print(self._pickedup[i], end= ', ')
         print()
-        dummy = 123
 
+    # This function chooses the next destination.
     def select_destination(self):
         # Initialize destination_value to the current value
         destination_value = self._current_cup_value
@@ -99,13 +95,14 @@ class CupCircle:
                 continue
             # below command is an implicit else clause
             if destination_value not in self._cups:
-                # destination_value = max(self._cups)
                 destination_value = self._cups['MAX']
             return destination_value
 
+    # This function selects the new current cup.
     def select_new_current_cup(self):
         self._current_cup_value = self._cups[self._current_cup_value]
 
+    # This function handles running a move
     def do_move(self, i):
         # print(f'-- move {i} --') # for debugging only
         # self.display_cups() # for debugging only
@@ -121,35 +118,23 @@ class CupCircle:
         # print() # for debugging only
         self.select_new_current_cup()
 
-# Reading input from the input file
-input_filename='input.txt'
+# Reading input from the input file.
+input_filename='input_sample1.txt'
 print(f'\nUsing input file: {input_filename}\n')
 with open(input_filename) as f:
     in_string = f.readline().rstrip()
 print('Input string: ' + in_string + '\n')
 
-# # Parsing input file   
+# # Parsing input file.
 cup_circle = CupCircle(in_string)
 
-dummy = 123
-
+# Do the 10 million rounds.
 for i in range(1,10000000):
     cup_circle.do_move(i)
 
+# Display the final results.
 print('-- final --')
 cup_circle.display_cups()
 print()
 
-# # Construct part A output
-# partA_output = ''
-# prev = 1
-# while True:
-#     new_cup = cup_circle._cups[prev]
-#     if new_cup == 1:
-#         break
-#     # implicit else:
-#     prev = new_cup
-#     partA_output += str(new_cup)
-    
-# print(f'The output for part A is {partA_output}')
-# print(f'when using input file: {input_filename}\n')
+
