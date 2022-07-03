@@ -1,0 +1,17 @@
+Thinking through problem (before writing any code)
+
+For part A:
+
+Need to identify lines that are duplicates, and group them together.  All groups with an odd number of appearances are counted (with "black" side up), and all groups with even number of appearances are not counted (they end up with the "white" side up).  Groups with only one appearance count as "black" (one is an odd number).  
+
+Without writing any code I expect that I can identify duplicates by converting the input strings by:
+
+e alone will be treated as +2 in the horizontal
+e after n or s will be treated as +1 in the horizontal
+w alone will be treated as -2 in the horizontal
+w after n or s will be treated as -1 in the horizontal
+n before e or w will be treated as +1 in the vertical
+s before e or w will be treated as -1 in the vertical
+
+
+
