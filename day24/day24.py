@@ -2,7 +2,6 @@
 # https://adventofcode.com/2020/day/24
 
 import copy
-from itertools import count
 
 # This program has defined a coordinate system to identify all tiles.
 # The below notes define how the input characters are represented in the coordinates.
@@ -26,7 +25,7 @@ compass_directions = {'e':[1,0], 'w':[-1,0], 'n':[0,1], 's':[0,-1]}
 
 # This function returns True if this black tile should remain black
 def dont_flip_black(black_tile, black_tile_set__old):
-    adj_matrix = [[0,-2],[0,2],[1,1],[1,-1],[-1,1],[-1,-1]]
+    adj_matrix = [[-2,0],[2,0],[1,1],[1,-1],[-1,1],[-1,-1]]
     count_black = 0
 
     for adj in adj_matrix:
@@ -37,10 +36,10 @@ def dont_flip_black(black_tile, black_tile_set__old):
         if tuple(adjacent_tile) in black_tile_set__old:
             count_black += 1
     
-    return count_black == 1
+    return count_black in [1,2]
 
 def get_adjacent_white_tiles(black_tile, black_tile_set__old):
-    adj_matrix = [[0,-2],[0,2],[1,1],[1,-1],[-1,1],[-1,-1]]
+    adj_matrix = [[-2,0],[2,0],[1,1],[1,-1],[-1,1],[-1,-1]]
     adj_white_tiles = []
 
     for adj in adj_matrix:
@@ -92,7 +91,7 @@ for key, value in tile_coords_and_count.items():
 print(f'The answer to part A is: {count_partA}\n')
 
 # Starting on part B
-for day_step in range(1, 6):
+for day_step in range(1, 101):
     print(f'Day {day_step}', end=': ')
     black_tile_set__new = set()
     white_tile_count_black_adjacent = dict()
