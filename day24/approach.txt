@@ -14,4 +14,18 @@ n before e or w will be treated as +1 in the vertical
 s before e or w will be treated as -1 in the vertical
 
 
+For part B (Notes after part A coded, but before writing any code for part B):
 
+Create a new data structure (a set) listing the coordinates of all black tiles.
+   Initialize this inside the if value % 2: count_partA += 1   code from partA
+
+Make a copy of the set.  One set will be modified and the other won't be while computing a day's changes.
+Each set shows the coordinates of all black tiles.  
+
+To determine which black tiles should flip to white, traverse the unmodified set and 
+count (from the unmodified file) the number of black tiles adjacent to each tile.
+
+To determine which white tiles should flip to black, traverse the unmodified set
+(probably in same loop as above) and create a dict of adjacent white tiles.
+   The key will be the coordinates of the adjacent white tile.
+   The value will be the number of black tiles that are adjacent to that white tile.
