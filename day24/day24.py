@@ -31,13 +31,13 @@ def dont_flip_black(black_tile, black_tile_set__old):
     for adj in adj_matrix:
         adjacent_tile = []
         for dim in range(len(black_tile)):
-            dummy = 123
             adjacent_tile.append(black_tile[dim] + adj[dim])
         if tuple(adjacent_tile) in black_tile_set__old:
             count_black += 1
     
     return count_black in [1,2]
 
+# This function gets a list of white tiles that are adjacent to the input black tile
 def get_adjacent_white_tiles(black_tile, black_tile_set__old):
     adj_matrix = [[-2,0],[2,0],[1,1],[1,-1],[-1,1],[-1,-1]]
     adj_white_tiles = []
@@ -45,7 +45,6 @@ def get_adjacent_white_tiles(black_tile, black_tile_set__old):
     for adj in adj_matrix:
         adjacent_tile = []
         for dim in range(len(black_tile)):
-            dummy = 123
             adjacent_tile.append(black_tile[dim] + adj[dim])
         if tuple(adjacent_tile) not in black_tile_set__old:
             adj_white_tiles.append(tuple(adjacent_tile))
@@ -88,11 +87,11 @@ for key, value in tile_coords_and_count.items():
     if value % 2:
         count_partA += 1
         black_tile_set__old.add(key)
-print(f'The answer to part A is: {count_partA}\n')
+print(f'The answer to part A is: {count_partA}')
+print(f'(There are {count_partA} black tiles after renovation complete)\n')
 
 # Starting on part B
 for day_step in range(1, 101):
-    print(f'Day {day_step}', end=': ')
     black_tile_set__new = set()
     white_tile_count_black_adjacent = dict()
 
@@ -110,6 +109,10 @@ for day_step in range(1, 101):
     for white_tile, tile_count in white_tile_count_black_adjacent.items():
         if tile_count == 2:
             black_tile_set__new.add(white_tile)
-    print(len(black_tile_set__new))
 
+    # Now that this "day" is complete, copy the new set of tiles into the old set of tiles
     black_tile_set__old = copy.deepcopy(black_tile_set__new)
+
+print(f'The result for part B is {len(black_tile_set__new)}')
+print (f'(There are {len(black_tile_set__new)} black tiles after {day_step} Days)\n')
+
