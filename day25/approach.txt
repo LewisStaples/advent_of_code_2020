@@ -1,0 +1,17 @@
+Day 25 Approach:
+
+This has thoughts about the problem, based on reading the given problem description and looking at the input file.  (This document was written before writing any code)
+
+The input file has public keys for door and card.
+
+Determine the loop sizes for door and card.
+
+Each loop size is the number of iterations needed to convert the value 1 into the loop size's associated public key.  Each iteration the value is multiplied by the subject number (7), and then its reset to the remainder after dividing by 20201227.
+
+Either device's loop size to transform the other device's public key to the encryption key.  This encryption key is the same irregardless which device's loop size (and hence which other device's public key) is used.  
+
+If I understand this correctly, either device's loop size will suffice to solve the problem.  
+
+The input file does not indicate which key is for the door vs. the card, but it doesn't matter, since both should lead to the same encryption key.
+
+
